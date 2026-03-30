@@ -374,4 +374,16 @@ void loop() {
      lastLog = millis();
      Serial.printf("[STATE_DEBUG] Estado=%d, Duración corte: %lu s\n", (int)currentState, (millis()-outageStart)/1000);
   }
+
+  // =====================================================
+  // SEGURIDAD: Reinicio preventivo cada 24 horas
+  // Evita fragmentación de RAM al usar Strings a largo plazo
+  // =====================================================
+  static unsigned long lastReboot = millis();
+  // 86,400,000 ms = 24 horas
+  if (currentState == NORMAL && (millis() - lastReboot > 86400000UL)) {
+    Serial.println("\n[SISTEMA] Mantenimiento: Reinicio preventivo de 24 horas...");
+    delay(1000);
+    ESP.restart();
+  }
 }
